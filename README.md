@@ -1,105 +1,145 @@
-
 <div align="center">
     <img src="docs/assets/meerkat_banner.png" height=100 alt="Meerkat logo"/>
-</div>
 
------
+---
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/robustness-gym/meerkat/CI)
-![GitHub](https://img.shields.io/github/license/robustness-gym/meerkat)
-[![Documentation Status](https://readthedocs.org/projects/meerkat/badge/?version=latest)](https://meerkat.readthedocs.io/en/latest/?badge=latest)
+<!-- ![GitHub Workflow Status](https://github.com/HazyResearch/meerkat/actions/workflows/.github/workflows/ci.yml/badge.svg) -->
+[![GitHub](https://img.shields.io/github/license/HazyResearch/meerkat)](https://img.shields.io/github/license/HazyResearch/meerkat)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![codecov](https://codecov.io/gh/robustness-gym/meerkat/branch/main/graph/badge.svg?token=MOLQYUSYQU)](https://codecov.io/gh/robustness-gym/meerkat)
 
-Meerkat provides fast and flexible data structures for working with complex machine learning datasets. 
+Create interactive views of any dataset.
 
-[**Getting Started**](⚡️-Quickstart)
-| [**What is Meerkat?**](💡-what-is-Meerkat)
-| [**Docs**](https://meerkat.readthedocs.io/en/latest/index.html)
+[**Website**](http://meerkat.wiki)
+| [**Quickstart**](http://meerkat.wiki/docs/start/quickstart-df.html)
+| [**Docs**](http://meerkat.wiki/docs/index.html)
 | [**Contributing**](CONTRIBUTING.md)
-| [**Blogpost**](https://www.notion.so/sabrieyuboglu/Meerkat-DataPanels-for-Machine-Learning-64891aca2c584f1889eb0129bb747863)
-| [**About**](✉️-About)
+| [**Discord**](https://discord.gg/pw8E4Q26Tq)
+| [**Blogpost**](https://hazyresearch.stanford.edu/blog/2023-03-01-meerkat)
+
+</div>
 
 
 ## ⚡️ Quickstart
+
 ```bash
 pip install meerkat-ml
-``` 
-> _Optional_: some parts of Meerkat rely on optional dependencies. If you know which optional dependencies you'd like to install, you can do so using something like `pip install meerkat-ml[dev,text]` instead. See `setup.py` for a full list of optional dependencies.   
+```
+<!-- 
+> **_GPU Install_**: If you want to use Meerkat with a GPU, you will need to install PyTorch with GPU support. See [here](https://pytorch.org/get-started/locally/) for more details. -->
 
-> _Installing from dev_: `pip install "meerkat-ml[text] @ git+https://github.com/robustness-gym/meerkat@dev"`
- 
-Load a dataset into a `DataPanel` and get going!
+<!-- ```bash
+pip install "meerkat-ml @ git+https://github.com/robustness-gym/meerkat@clever-dev"
+```  -->
+<!-- 
+> **_Optional Dependencies_**: some parts of Meerkat rely on optional dependencies e.g. audio processing may rely on utilities from `torchaudio`. See  -->
+<!-- 
+Then try one of our demos,
+
+```bash
+mk demo tutorial-image-gallery --copy
+```
+
+Explore the code for this demo in `tutorial-image-gallery.py`. To see a full list of demos, use `mk demo --help`.  -->
+
+**Next Steps**.
+Check out our [Getting Started page](http://meerkat.wiki/docs/start/quickstart-df.html) and our [documentation](http://meerkat.wiki/docs/index.html) to start building with Meerkat.
+
+## Why Meerkat?
+
+Meerkat is an open-source Python library that helps users visualize, explore, and annotate any dataset. It is especially useful when processing unstructured data types (_e.g._ free text, PDFs, images, video) with machine learning models. 
+
+### ✏️ Features and Design Principles
+
+Here are four principles that inform Meerkat's design.
+
+**(1) Low overhead.**  With four lines of Python, start interacting with any dataset. 
+- Zero-copy integrations with your preferred data abstractions: Pandas, Arrow, HF Datasets, Ibis, SQL.
+- Limited data movement. With Meerkat, you interact with your data where it already lives: no uploads to external databases and no reformatting.
+
 ```python
 import meerkat as mk
-from meerkat.contrib.imagenette import download_imagenette
-
-download_imagenette(".")
-dp = mk.DataPanel.from_csv("imagenette2-160/imagenette.csv")
-dp["img"] = mk.ImageColumn.from_filepaths(dp["img_path"])
-
-dp[["label", "split", "img"]].lz[:3]
+df = mk.from_csv("paintings.csv")
+df["image"] = mk.files("image_url")
+df
 ```
-<img width="500" alt="readme_figure" src="https://user-images.githubusercontent.com/32822771/132963373-b4ae2f22-ee89-483c-b131-12e2fa3c9284.png">
 
-To learn more, continue following along in our tutorial:  
-[![Open intro](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15kPD6Kym0MOpICafHgO1pCt8T2N_xevM#scrollTo=03nX_l19B5Zt&uniqifier=1) 
+<div align="center">
+  <img src="website/static/dataframe-demo.gif" height=300 alt="Meerkat logo"/>
+</div>
 
-## 💡 What is Meerkat?
-Meerkat makes it easier for ML practitioners to interact with high-dimensional, multi-modal data. It provides simple abstractions for data inspection, model evaluation and model training supported by efficient and robust IO under the hood.  
 
-Meerkat's core contribution is the `DataPanel`, a simple columnar data abstraction. The Meerkat `DataPanel` can house columns of arbitrary type – from integers and strings to complex, high-dimensional objects like videos, images, medical volumes and graphs. 
+**(2) Diverse data types.** Visualize and annotate almost any data type in Meerkat interfaces: text, images, audio, video, MRI scans, PDFs, HTML, JSON. 
 
-**`DataPanel` loads high-dimensional data lazily.**     A full high-dimensional dataset won't typically fit in memory. Behind the scenes, `DataPanel` handles this by only materializing these objects when they are needed. 
+<div align="center">
+	<img src="website/static/data-types.gif" height=300 alt=""/>
+</div>
+
+
+**(3) "Intelligent" user interfaces.** Meerkat makes it easy to embed **machine learning models** (e.g. LLMs) within user interfaces to enable intelligent functionality such as searching, grouping and autocomplete. 
+
 ```python
-import meerkat as mk
-
-# Images are NOT read from disk at DataPanel creation...
-dp = mk.DataPanel({
-    'text': ['The quick brown fox.', 'Jumped over.', 'The lazy dog.'],
-    'image': mk.ImageColumn.from_filepaths(['fox.png', 'jump.png', 'dog.png']),
-    'label': [0, 1, 0]
-}) 
-
-# ...only at this point is "fox.png" read from disk
-dp["image"][0]
+df["embedding"] = mk.embed(df["img"], engine="clip")
+match = mk.gui.Match(df,
+	against="embedding",
+	engine="clip"
+)
+sorted_df = mk.sort(df,
+	by=match.criterion.name,
+	ascending=False
+)
+gallery = mk.gui.Gallery(sorted_df)
+mk.gui.html.div([match, gallery])
 ```
 
-**`DataPanel` supports advanced indexing.**  Using indexing patterns similar to those of Pandas and NumPy, we can access a subset of a `DataPanel`'s rows and columns. 
+<div align="center">
+	<img src="website/static/interact-demo.gif" height=300 alt="Meerkat logo"/>
+</div>
+
+**(4) Declarative (think: Seaborn), but also infinitely customizable and composable.**
+Meerkat visualization components can be composed and customized to create new interfaces. 
+
 ```python
-import meerkat as mk
-dp = ... # create DataPanel
+plot = mk.gui.plotly.Scatter(df=plot_df, x="umap_1", y="umap_2",)
 
-# Pull a column out of the DataPanel
-new_col: mk.ImageColumn = dp["image"]
+@mk.gui.reactive
+def filter(selected: list, df: mk.DataFrame):
+    return df[df.primary_key.isin(selected)]
 
-# Create a new DataPanel from a subset of the columns in an existing one
-new_dp: mk.DataPanel = dp[["image", "label"]] 
+filtered_df = filter(plot.selected, plot_df)
+table = mk.gui.Table(filtered_df, classes="h-full")
 
-# Create a new DataPanel from a subset of the rows in an existing one
-new_dp: mk.DataPanel = dp[10:20] 
-new_dp: mk.DataPanel = dp[np.array([0,2,4,8])]
-
-# Pull a column out of the DataPanel and get a subset of its rows 
-new_col: mk.ImageColumn = dp["image"][10:20]
+mk.gui.html.flex([plot, table], classes="h-[600px]") 
 ```
 
-**`DataPanel` supports `map`, `update` and `filter` operations.**  When training and evaluating our models, we often perform operations on each example in our dataset (*e.g.* compute a model's prediction on each example, tokenize each sentence, compute a model's embedding for each example) and store them . The `DataPanel` makes it easy to perform these operations and produce new columns (via `DataPanel.map`), store the columns alongside the original data (via `DataPanel.update`), and extract an important subset of the datset (via `DataPanel.filter`). Under the hood, dataloading is multiprocessed so that costly I/O doesn't bottleneck our computation. Consider the example below where we use update a `DataPanel` with two new columns holding model predictions and probabilities.  
-```python
-# A simple evaluation loop using Meerkat 
-dp: DataPanel = ... # get DataPanel
-model: nn.Module = ... # get the model
-model.to(0).eval() # prepare the model for evaluation
+<div align="center">
+	<img src="website/static/compose.gif" height=300 alt="Meerkat logo"/>
+</div>
 
-@torch.no_grad()
-def predict(batch: dict):
-    probs = torch.softmax(model(batch["input"].to(0)), dim=-1)
-    return {"probs": probs.cpu(), "pred": probs.cpu().argmax(dim=-1)}
 
-# updated_dp has two new `TensorColumn`s: 1 for probabilities and one
-# for predictions
-updated_dp: mk.DataPanel = dp.update(function=predict, batch_size=128, is_batched_fn=True)
-```
+### ✨ Use cases where Meerkat shines
+- _Exploratory analysis over unstructured data types._ [Demo](https://www.youtube.com/watch?v=a8FBT33QACQ)
+- _Spot-checking the behavior of large language models (e.g. GPT-3)._  [Demo](https://www.youtube.com/watch?v=3ItA70qoe-o)
+- _Identifying systematic errors made by machine learning models._ [Demo](https://youtu.be/4Kk_LZbNWNs)
+- _Rapid labeling of validation data._
+
+### 🤔 Use cases where Meerkat may not be the right fit
+
+- _Are you only working with structured data (e.g. numerical and categorical variables)?_ Popular data visualization libraries (_e.g._ [Seaborn](https://seaborn.pydata.org/), [Matplotlib](https://matplotlib.org/)) are often sufficient. If you're looking for interactivity, [Plotly](https://plotly.com/) and [Streamlit](https://streamlit.io/) work well with structured data. Meerkat is differentiated in how it visualizes unstructured data types: long-form text, PDFs, HTML, images, video, audio...  
+- _Are you trying to make a straightforward demo of a machine learning model (single input/output, chatbot) and share with the world?_ [Gradio](https://gradio.app/) is likely a better fit! Though, if your demo involves visualizing lots of data, you may find Meerkat useful.
+- _Are you trying to manually label tens of thousands of data points?_  If you are looking for a data labeling tool to use with a labeling team, there are great open source labeling solutions designed for this (_e.g._ [LabelStudio](https://labelstud.io/)). In contrast, Meerkat is great fit for teams/individuals without access to a large labeling workforce who are using pretrained models (_e.g._ GPT-3) and need to label validation data or in-context examples.
+
+
+
+
+<!-- Our goal is to make foundation models a more reliable
+software abstraction for processing unstructured datasets.
+[Read our blogpost to learn more.](https://hazyresearch.stanford.edu/blog/2023-03-01-meerkat)
+ -->
+
+
 
 ## ✉️ About
-Meerkat is being developed at Stanford's Hazy Research Lab. Please reach out to `kgoel [at] cs [dot] stanford [dot] edu` if you would like to use or contribute to Meerkat.
+
+Meerkat is being built by Machine Learning PhD students in the [Hazy Research](https://hazyresearch.stanford.edu) lab at Stanford. We're excited to build for a future where models will make it easier for teams to sift and reason through large volumes of unstructtured data effortlessly. 
+
+Please reach out to `kgoel [at] cs [dot] stanford [dot] edu, eyuboglu [at] stanford [dot] edu, and arjundd [at] stanford [dot] edu` if you would like to use Meerkat for a project, at your company or if you have any questions.
